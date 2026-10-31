@@ -1,0 +1,30 @@
+{
+  "name": "nodo-sur-proyectos",
+  "version": "1.0.0",
+  "description": "Avance del reto final de Desarrollo Full-Stack: gestor de proyectos de Nodo Sur Soluciones Digitales (API REST con Express, MongoDB y JWT, y frontend en HTML, CSS y JavaScript).",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "test": "node --test backend/tests/",
+    "seed": "node backend/scripts/seed.js",
+    "db:local": "node backend/scripts/db-local.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "Alexis Ayala",
+  "license": "ISC",
+  "private": true,
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.4"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^11.3.0"
+  }
+}
