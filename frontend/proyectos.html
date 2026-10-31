@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proyectos | Proyectos Nodo Sur</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="barra">
+      <img class="logo" src="images/logo.svg" alt="Logotipo de Nodo Sur Soluciones Digitales">
+      <div class="sesion">
+        <span id="usuario-activo" class="lema"></span>
+        <a id="btn-ir-login" class="btn btn-claro" href="index.html" hidden>Iniciar sesión</a>
+        <button type="button" id="btn-salir" class="btn btn-claro" hidden>Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container container-ancho">
+    <h1>Proyectos</h1>
+
+    <div class="barra-herramientas">
+      <div class="filtros" role="group" aria-label="Filtrar por estado" id="filtros">
+        <button type="button" class="filtro activo" data-estado="" aria-pressed="true">Todos</button>
+        <button type="button" class="filtro" data-estado="Pendiente" aria-pressed="false">Pendiente</button>
+        <button type="button" class="filtro" data-estado="En curso" aria-pressed="false">En curso</button>
+        <button type="button" class="filtro" data-estado="Completado" aria-pressed="false">Completado</button>
+      </div>
+      <button type="button" id="btn-nuevo" class="btn" hidden>Nuevo proyecto</button>
+    </div>
+
+    <p class="contador" id="contador" aria-live="polite"></p>
+    <p id="aviso" class="mensaje" role="status" aria-live="polite"></p>
+    <p id="cargando" class="cargando">Cargando proyectos... el servidor puede tardar en despertar.</p>
+
+    <ul id="lista-proyectos" class="lista"></ul>
+    <div id="vacio" class="vacio" hidden>
+      <span class="vacio-icono" aria-hidden="true">&#9744;</span>
+      <p>No hay proyectos para mostrar.</p>
+    </div>
+  </main>
+
+  <dialog id="dialogo" aria-labelledby="dialogo-titulo">
+    <form id="form-proyecto" novalidate>
+      <h2 id="dialogo-titulo">Nuevo proyecto</h2>
+      <input type="hidden" id="p-id">
+
+      <label for="p-nombre">Nombre del proyecto</label>
+      <input type="text" id="p-nombre" maxlength="80" required>
+      <p class="error-campo" id="err-p-nombre" hidden></p>
+
+      <label for="p-cliente">Cliente</label>
+      <input type="text" id="p-cliente" maxlength="80" required>
+      <p class="error-campo" id="err-p-cliente" hidden></p>
+
+      <label for="p-servicio">Servicio</label>
+      <select id="p-servicio" required>
+        <option value="">Selecciona un servicio</option>
+        <option>Desarrollo web</option>
+        <option>Aplicaciones móviles</option>
+        <option>Consultoría TI</option>
+        <option>Infraestructura y nube</option>
+        <option>Soporte y mantenimiento</option>
+      </select>
+      <p class="error-campo" id="err-p-servicio" hidden></p>
+
+      <label for="p-presupuesto">Presupuesto (MXN)</label>
+      <input type="number" id="p-presupuesto" min="0" step="0.01" required>
+      <p class="error-campo" id="err-p-presupuesto" hidden></p>
+
+      <label for="p-estado">Estado</label>
+      <select id="p-estado">
+        <option>Pendiente</option>
+        <option>En curso</option>
+        <option>Completado</option>
+      </select>
+
+      <label for="p-fecha">Fecha de entrega (opcional)</label>
+      <input type="date" id="p-fecha">
+
+      <label for="p-descripcion">Descripción (opcional)</label>
+      <textarea id="p-descripcion" rows="3" maxlength="300"></textarea>
+
+      <p id="aviso-form" class="mensaje error" role="alert"></p>
+      <div class="acciones-form">
+        <button type="button" id="btn-cancelar" class="btn-accion">Cancelar</button>
+        <button type="submit" class="btn">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer class="site-footer">
+    <p>Nodo Sur Soluciones Digitales S.A. de C.V. | Avance del reto final</p>
+  </footer>
+  <script src="js/api.js"></script>
+  <script src="js/proyectos.js"></script>
+</body>
+</html>
