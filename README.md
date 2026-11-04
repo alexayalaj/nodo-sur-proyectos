@@ -76,3 +76,4 @@ El token se envía en el encabezado `Authorization: Bearer <token>`. Importa
 
 - Repositorio: https://github.com/alexayalaj/nodo-sur-proyectos
 - Despliegue en la nube (Render + MongoDB Atlas): https://nodo-sur-proyectos.onrender.com
+- Video demostrativo: https://youtu.be/5Pgnbb3ooC0
