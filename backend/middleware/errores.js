@@ -27,8 +27,9 @@ function manejadorErrores(err, req, res, next) {
   }
 
   if (estado >= 500) {
-    console.error(err.stack);
-    if (process.env.NODE_ENV === 'production') mensaje = 'Error interno del servidor.';
+    // Los errores de la API externa (502/504) traen un mensaje pensado para el cliente
+    if (process.env.NODE_ENV !== 'test') console.error(err.expuesto ? `${estado} ${err.message}` : err.stack);
+    if (process.env.NODE_ENV === 'production' && !err.expuesto) mensaje = 'Error interno del servidor.';
   }
   return res.status(estado).json({ ok: false, data: null, message: mensaje });
 }

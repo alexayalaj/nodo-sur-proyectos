@@ -5,25 +5,42 @@ const { conectarBD } = require('../config/db');
 const Usuario = require('../models/Usuario');
 const Proyecto = require('../models/Proyecto');
 
+const CORREOS = ['ana@nodosur.example', 'luis@nodosur.example'];
+const CLIENTES = ['Grupo Atlas', 'Transportes del Valle', 'Clínica San José', 'Casa Fuerte', 'Textiles Aurora', 'Cafés del Sur', 'Logística Ceiba', 'Colegio Horizonte'];
+const SERVICIOS = ['Desarrollo web', 'Aplicaciones móviles', 'Consultoría TI', 'Infraestructura y nube', 'Soporte y mantenimiento'];
+const ESTADOS = ['Pendiente', 'En curso', 'Completado'];
+const NOMBRES = [
+  'Portal de clientes', 'App de logística', 'Migración a la nube', 'Auditoría de seguridad', 'Tienda en línea',
+  'Panel de indicadores', 'App de reparto', 'Respaldo en la nube', 'Soporte mensual', 'Rediseño del sitio',
+  'Integración de facturación', 'App de citas', 'Monitoreo de servidores', 'Consultoría de procesos', 'Portal de proveedores',
+  'App de inventario', 'Actualización de red', 'Mesa de ayuda', 'Sitio institucional', 'Migración de correo',
+  'App de asistencia', 'Análisis de costos en la nube', 'Mantenimiento de la tienda', 'Plataforma de cursos', 'Plan de continuidad',
+];
+
 async function sembrar() {
   if (!process.env.SEED_PASSWORD || process.env.SEED_PASSWORD.length < 8) {
     throw new Error('Define SEED_PASSWORD (mínimo 8 caracteres) en el archivo .env.');
   }
   await conectarBD(process.env.MONGODB_URI);
   await Proyecto.deleteMany({});
-  await Usuario.deleteMany({ correo: { $in: ['ana@nodosur.example', 'luis@nodosur.example'] } });
+  await Usuario.deleteMany({ correo: { $in: CORREOS } });
 
   const hash = await bcrypt.hash(process.env.SEED_PASSWORD, 10);
-  const ana = await Usuario.create({ nombre: 'Ana Torres', correo: 'ana@nodosur.example', password: hash });
-  const luis = await Usuario.create({ nombre: 'Luis Ramírez', correo: 'luis@nodosur.example', password: hash });
+  const ana = await Usuario.create({ nombre: 'Ana Torres', correo: CORREOS[0], password: hash, rol: 'admin' });
+  const luis = await Usuario.create({ nombre: 'Luis Ramírez', correo: CORREOS[1], password: hash });
 
-  await Proyecto.insertMany([
-    { nombre: 'Portal de clientes', cliente: 'Grupo Atlas', servicio: 'Desarrollo web', presupuesto: 185000, estado: 'En curso', fechaEntrega: '2026-12-15', descripcion: 'Portal web para consulta de facturas.', propietario: ana._id },
-    { nombre: 'App de logística', cliente: 'Transportes del Valle', servicio: 'Aplicaciones móviles', presupuesto: 240000, estado: 'Pendiente', propietario: ana._id },
-    { nombre: 'Migración a la nube', cliente: 'Clínica San José', servicio: 'Infraestructura y nube', presupuesto: 120000, estado: 'Completado', fechaEntrega: '2026-09-30', propietario: luis._id },
-    { nombre: 'Auditoría de seguridad', cliente: 'Casa Fuerte', servicio: 'Consultoría TI', presupuesto: 65000, estado: 'En curso', propietario: luis._id },
-  ]);
-  console.log('Datos de ejemplo cargados: 2 usuarios y 4 proyectos.');
+  const proyectos = NOMBRES.map((nombre, i) => ({
+    nombre,
+    cliente: CLIENTES[i % CLIENTES.length],
+    servicio: SERVICIOS[i % SERVICIOS.length],
+    presupuesto: 30000 + ((i * 17000) % 260000),
+    estado: ESTADOS[i % ESTADOS.length],
+    fechaEntrega: new Date(Date.UTC(2026, 11 + (i % 4), 1 + ((i * 3) % 28))),
+    descripcion: `Proyecto de ejemplo número ${i + 1} para ${CLIENTES[i % CLIENTES.length]}.`,
+    propietario: i % 3 === 0 ? ana._id : luis._id,
+  }));
+  await Proyecto.insertMany(proyectos);
+  console.log(`Datos de ejemplo cargados: 2 usuarios (${CORREOS[0]} es admin) y ${proyectos.length} proyectos.`);
 }
 
 sembrar()

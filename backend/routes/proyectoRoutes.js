@@ -1,16 +1,19 @@
 const express = require('express');
 const ctrl = require('../controllers/proyectoController');
 const autenticar = require('../middleware/autenticar');
-const { validarProyecto, validarId } = require('../middleware/validar');
+const { esPropietarioOAdmin } = require('../middleware/autorizar');
+const { validarProyecto, validarId, validarConsultaProyectos } = require('../middleware/validaciones');
 
 const router = express.Router();
 
-// Lectura pública
-router.get('/', ctrl.listar);
-router.get('/:id', validarId, ctrl.obtener);
-// Escritura con sesión
-router.post('/', autenticar, validarProyecto(true), ctrl.crear);
-router.put('/:id', autenticar, validarId, validarProyecto(false), ctrl.actualizar);
-router.delete('/:id', autenticar, validarId, ctrl.eliminar);
+// Todas las rutas exigen sesión
+router.use(autenticar);
+
+router.get('/', validarConsultaProyectos, ctrl.listar);
+router.get('/resumen', ctrl.resumen);
+router.post('/', validarProyecto(true), ctrl.crear);
+router.get('/:id', validarId, esPropietarioOAdmin, ctrl.obtener);
+router.put('/:id', validarId, validarProyecto(false), esPropietarioOAdmin, ctrl.actualizar);
+router.delete('/:id', validarId, esPropietarioOAdmin, ctrl.eliminar);
 
 module.exports = router;

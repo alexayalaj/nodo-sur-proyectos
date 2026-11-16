@@ -17,6 +17,11 @@ const proyectoSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Índices para los filtros, el orden y la paginación del listado
+proyectoSchema.index({ propietario: 1, createdAt: -1 });
+proyectoSchema.index({ estado: 1, createdAt: -1 });
+proyectoSchema.index({ servicio: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Proyecto', proyectoSchema);
 module.exports.SERVICIOS = SERVICIOS;
 module.exports.ESTADOS = ESTADOS;
