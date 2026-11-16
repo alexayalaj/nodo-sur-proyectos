@@ -23,7 +23,8 @@ async function sembrar() {
   }
   await conectarBD(process.env.MONGODB_URI);
   await Proyecto.deleteMany({});
-  await Usuario.deleteMany({ correo: { $in: CORREOS } });
+  // sanitizeFilter está activo: el operador $in propio se marca como confiable
+  await Usuario.deleteMany({ correo: mongoose.trusted({ $in: CORREOS }) });
 
   const hash = await bcrypt.hash(process.env.SEED_PASSWORD, 10);
   const ana = await Usuario.create({ nombre: 'Ana Torres', correo: CORREOS[0], password: hash, rol: 'admin' });
@@ -37,7 +38,7 @@ async function sembrar() {
     estado: ESTADOS[i % ESTADOS.length],
     fechaEntrega: new Date(Date.UTC(2026, 11 + (i % 4), 1 + ((i * 3) % 28))),
     descripcion: `Proyecto de ejemplo número ${i + 1} para ${CLIENTES[i % CLIENTES.length]}.`,
-    propietario: i % 3 === 0 ? ana._id : luis._id,
+    propietario: i % 4 === 0 ? ana._id : luis._id,
   }));
   await Proyecto.insertMany(proyectos);
   console.log(`Datos de ejemplo cargados: 2 usuarios (${CORREOS[0]} es admin) y ${proyectos.length} proyectos.`);

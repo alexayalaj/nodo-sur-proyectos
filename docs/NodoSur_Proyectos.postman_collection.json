@@ -1,9 +1,39 @@
 {
   "info": {
-    "name": "Proyectos Nodo Sur - API",
-    "description": "Colección del avance del reto final. Orden sugerido: registro, login, crear, listar, obtener, actualizar, casos de error y eliminar. Cambia baseUrl a la URL de Render para probar la nube.",
+    "name": "Proyectos Nodo Sur - API (entrega final)",
+    "description": "Colección del reto final. Variables: baseUrl, token (usuario), tokenAdmin (administrador), proyectoId, usuarioId, password. Orden sugerido: Salud, Autenticación (guarda los tokens), Proyectos, Usuarios (administrador), Tipo de cambio y errores generales. Cambia baseUrl a la URL de Render para probar la nube.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "key": "proyectoId",
+      "value": ""
+    },
+    {
+      "key": "usuarioId",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "tokenAlterado",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJyb2wiOiJhZG1pbiJ9.firma-invalida"
+    }
+  ],
   "item": [
     {
       "name": "Salud",
@@ -55,10 +85,10 @@
                 "registro"
               ]
             },
-            "description": "",
+            "description": "El rol siempre es usuario, aunque se envíe otro.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Alexis Ayala\",\n  \"correo\": \"alexis@ejemplo.com\",\n  \"password\": \"cambia-esta-clave\"\n}",
+              "raw": "{\n  \"nombre\": \"Persona de Prueba\",\n  \"correo\": \"prueba@nodosur.example\",\n  \"password\": \"{{password}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -76,14 +106,14 @@
                 "type": "text/javascript",
                 "exec": [
                   "const j = pm.response.json();",
-                  "if (j.ok && j.data.token) { pm.collectionVariables.set('token', j.data.token); }"
+                  "if (j.data && j.data.token) { pm.collectionVariables.set('token', j.data.token); }"
                 ]
               }
             }
           ]
         },
         {
-          "name": "POST login (200)",
+          "name": "POST login usuario (200)",
           "request": {
             "method": "POST",
             "header": [
@@ -106,7 +136,7 @@
             "description": "",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"correo\": \"alexis@ejemplo.com\",\n  \"password\": \"cambia-esta-clave\"\n}",
+              "raw": "{\n  \"correo\": \"luis@nodosur.example\",\n  \"password\": \"{{password}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -124,11 +154,167 @@
                 "type": "text/javascript",
                 "exec": [
                   "const j = pm.response.json();",
-                  "if (j.ok && j.data.token) { pm.collectionVariables.set('token', j.data.token); }"
+                  "if (j.data && j.data.token) { pm.collectionVariables.set('token', j.data.token); }"
                 ]
               }
             }
           ]
+        },
+        {
+          "name": "POST login administrador (200)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"ana@nodosur.example\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.data && j.data.token) { pm.collectionVariables.set('tokenAdmin', j.data.token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST login con datos inválidos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"no-es-correo\",\n  \"password\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "POST login con inyección NoSQL (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": {\n    \"$gt\": \"\"\n  },\n  \"password\": {\n    \"$gt\": \"\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "POST login con contraseña incorrecta (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"luis@nodosur.example\",\n  \"password\": \"incorrecta123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
         },
         {
           "name": "GET perfil (200)",
@@ -187,7 +373,7 @@
             "description": "",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Portal de clientes\",\n  \"cliente\": \"Grupo Atlas\",\n  \"servicio\": \"Desarrollo web\",\n  \"presupuesto\": 150000,\n  \"estado\": \"Pendiente\",\n  \"fechaEntrega\": \"2026-12-15\",\n  \"descripcion\": \"Portal web para consulta de facturas.\"\n}",
+              "raw": "{\n  \"nombre\": \"Portal de proveedores\",\n  \"cliente\": \"Grupo Atlas\",\n  \"servicio\": \"Desarrollo web\",\n  \"presupuesto\": 150000,\n  \"estado\": \"Pendiente\",\n  \"fechaEntrega\": \"2026-12-20\",\n  \"descripcion\": \"Portal para consulta de pedidos.\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -212,17 +398,22 @@
                 "type": "text/javascript",
                 "exec": [
                   "const j = pm.response.json();",
-                  "if (j.ok && j.data._id) { pm.collectionVariables.set('proyectoId', j.data._id); }"
+                  "if (j.data && j.data._id) { pm.collectionVariables.set('proyectoId', j.data._id); }"
                 ]
               }
             }
           ]
         },
         {
-          "name": "GET listar proyectos (200)",
+          "name": "POST crear con datos inválidos (400)",
           "request": {
-            "method": "GET",
-            "header": [],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/proyectos",
               "host": [
@@ -234,13 +425,234 @@
               ]
             },
             "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"x\",\n  \"cliente\": \"\",\n  \"servicio\": \"Otro\",\n  \"presupuesto\": -5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "auth": {
-              "type": "noauth"
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
             }
           }
         },
         {
-          "name": "GET obtener proyecto (200)",
+          "name": "GET listar paginado (página 2, límite 5)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos?pagina=2&limite=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "2"
+                },
+                {
+                  "key": "limite",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET filtros y orden combinados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos?estado=En curso&q=app&orden=-presupuesto",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "En curso"
+                },
+                {
+                  "key": "q",
+                  "value": "app"
+                },
+                {
+                  "key": "orden",
+                  "value": "-presupuesto"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET filtrar por servicio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos?servicio=Desarrollo web",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos"
+              ],
+              "query": [
+                {
+                  "key": "servicio",
+                  "value": "Desarrollo web"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET límite fuera de rango (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos?limite=500",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos"
+              ],
+              "query": [
+                {
+                  "key": "limite",
+                  "value": "500"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET operador en la query (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos?estado[$ne]=Pendiente",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET resumen para el tablero (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos/resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos",
+                "resumen"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET proyecto por id (200)",
           "request": {
             "method": "GET",
             "header": [],
@@ -257,12 +669,77 @@
             },
             "description": "",
             "auth": {
-              "type": "noauth"
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
             }
           }
         },
         {
-          "name": "PUT actualizar proyecto (200)",
+          "name": "GET proyecto con id mal formado (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos/123",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos",
+                "123"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET proyecto inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos/64b64b64b64b64b64b64b64b",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos",
+                "64b64b64b64b64b64b64b64b"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT editar proyecto (200)",
           "request": {
             "method": "PUT",
             "header": [
@@ -285,7 +762,7 @@
             "description": "",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"estado\": \"En curso\",\n  \"presupuesto\": 175000\n}",
+              "raw": "{\n  \"estado\": \"En curso\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -301,6 +778,70 @@
                   "type": "string"
                 }
               ]
+            }
+          }
+        },
+        {
+          "name": "PUT editar proyecto ajeno como administrador (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos/{{proyectoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos",
+                "{{proyectoId}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descripcion\": \"Editado por el administrador.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET listar sin token (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
             }
           }
         },
@@ -336,115 +877,75 @@
       ]
     },
     {
-      "name": "Casos de error",
+      "name": "Usuarios (administrador)",
       "item": [
         {
-          "name": "POST crear sin token (401)",
+          "name": "GET listar usuarios (200)",
           "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/proyectos",
+              "raw": "{{baseUrl}}/api/usuarios?pagina=1&limite=10",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "proyectos"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Portal de clientes\",\n  \"cliente\": \"Grupo Atlas\",\n  \"servicio\": \"Desarrollo web\",\n  \"presupuesto\": 150000,\n  \"estado\": \"Pendiente\",\n  \"fechaEntrega\": \"2026-12-15\",\n  \"descripcion\": \"Portal web para consulta de facturas.\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "auth": {
-              "type": "noauth"
-            }
-          }
-        },
-        {
-          "name": "POST crear con token inválido (403)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/proyectos",
-              "host": [
-                "{{baseUrl}}"
+                "usuarios"
               ],
-              "path": [
-                "api",
-                "proyectos"
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "1"
+                },
+                {
+                  "key": "limite",
+                  "value": "10"
+                }
               ]
             },
             "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Portal de clientes\",\n  \"cliente\": \"Grupo Atlas\",\n  \"servicio\": \"Desarrollo web\",\n  \"presupuesto\": 150000,\n  \"estado\": \"Pendiente\",\n  \"fechaEntrega\": \"2026-12-15\",\n  \"descripcion\": \"Portal web para consulta de facturas.\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "auth": {
               "type": "bearer",
               "bearer": [
                 {
                   "key": "token",
-                  "value": "token-falso",
+                  "value": "{{tokenAdmin}}",
                   "type": "string"
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "const otro = (j.data || []).find(u => u.correo === 'luis@nodosur.example');",
+                  "if (otro) { pm.collectionVariables.set('usuarioId', otro._id); }"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "POST crear con datos inválidos (400)",
+          "name": "GET listar usuarios con token de usuario (403)",
           "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/proyectos",
+              "raw": "{{baseUrl}}/api/usuarios",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "proyectos"
+                "usuarios"
               ]
             },
             "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nombre\": \"X\",\n  \"presupuesto\": -1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -458,9 +959,9 @@
           }
         },
         {
-          "name": "PUT proyecto ajeno (403) - usar el id de un proyecto de otro usuario",
+          "name": "PATCH cambiar rol (200)",
           "request": {
-            "method": "PUT",
+            "method": "PATCH",
             "header": [
               {
                 "key": "Content-Type",
@@ -468,26 +969,198 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/proyectos/{{proyectoAjenoId}}",
+              "raw": "{{baseUrl}}/api/usuarios/{{usuarioId}}/rol",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "proyectos",
-                "{{proyectoAjenoId}}"
+                "usuarios",
+                "{{usuarioId}}",
+                "rol"
               ]
             },
             "description": "",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"estado\": \"Completado\"\n}",
+              "raw": "{\n  \"rol\": \"usuario\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
             },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH rol inválido (400)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{usuarioId}}/rol",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "{{usuarioId}}",
+                "rol"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rol\": \"superadmin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH desactivar usuario (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{usuarioId}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "{{usuarioId}}",
+                "estado"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH reactivar usuario (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{usuarioId}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "{{usuarioId}}",
+                "estado"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tipo de cambio (API externa)",
+      "item": [
+        {
+          "name": "GET tipo de cambio USD y EUR (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tipo-cambio?monedas=USD,EUR",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tipo-cambio"
+              ],
+              "query": [
+                {
+                  "key": "monedas",
+                  "value": "USD,EUR"
+                }
+              ]
+            },
+            "description": "",
             "auth": {
               "type": "bearer",
               "bearer": [
@@ -501,104 +1174,115 @@
           }
         },
         {
-          "name": "GET proyecto inexistente (404)",
+          "name": "GET moneda no permitida (400)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/proyectos/507f1f77bcf86cd799439011",
+              "raw": "{{baseUrl}}/api/tipo-cambio?monedas=XXX",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "proyectos",
-                "507f1f77bcf86cd799439011"
-              ]
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          }
-        },
-        {
-          "name": "GET id mal formado (400)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/proyectos/123",
-              "host": [
-                "{{baseUrl}}"
+                "tipo-cambio"
               ],
-              "path": [
-                "api",
-                "proyectos",
-                "123"
-              ]
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          }
-        },
-        {
-          "name": "POST login con credenciales incorrectas (401)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "auth",
-                "login"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"correo\": \"alexis@ejemplo.com\",\n  \"password\": \"incorrecta-1\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+              "query": [
+                {
+                  "key": "monedas",
+                  "value": "XXX"
                 }
-              }
+              ]
             },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET sin token (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tipo-cambio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tipo-cambio"
+              ]
+            },
+            "description": "",
             "auth": {
               "type": "noauth"
             }
           }
         }
       ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:3000"
     },
     {
-      "key": "token",
-      "value": ""
-    },
-    {
-      "key": "proyectoId",
-      "value": ""
-    },
-    {
-      "key": "proyectoAjenoId",
-      "value": ""
+      "name": "Errores generales",
+      "item": [
+        {
+          "name": "GET ruta de API inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/no-existe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "no-existe"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "GET token alterado (403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/proyectos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "proyectos"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAlterado}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
     }
   ]
 }
