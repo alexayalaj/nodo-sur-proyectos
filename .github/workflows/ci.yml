@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pruebas-y-compilacion:
+    name: Pruebas y compilación del frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Instalar dependencias del backend
+        run: npm ci
+      - name: Pruebas del backend
+        run: npm test
+      - name: Instalar dependencias del frontend
+        run: npm ci --prefix frontend
+      - name: Compilar el frontend
+        run: npm run build --prefix frontend
