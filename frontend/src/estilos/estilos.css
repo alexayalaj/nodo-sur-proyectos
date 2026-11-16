@@ -24,10 +24,10 @@ a { color: var(--azul); font-weight: 600; }
 
 /* Encabezado y navegación */
 .encabezado { background: var(--azul-oscuro); color: #fff; border-bottom: 0.125rem solid var(--ambar); }
-.barra { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.75rem 5%; flex-wrap: wrap; max-width: 75rem; margin: 0 auto; }
+.barra { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.75rem clamp(1rem, 5%, 4rem); flex-wrap: wrap; max-width: 75rem; margin: 0 auto; }
 .logo { width: 11rem; }
-.menu { display: flex; align-items: center; gap: 0.5rem 1rem; flex-wrap: wrap; }
-.enlace { color: #fff; text-decoration: none; font-weight: 600; padding: 0.4rem 0.6rem; border-radius: 0.5rem; border-bottom: 0.1875rem solid transparent; }
+.menu { display: flex; align-items: center; gap: 0.5rem 0.4rem; flex-wrap: wrap; }
+.enlace { color: #fff; text-decoration: none; font-weight: 600; font-size: 0.95rem; padding: 0.4rem 0.5rem; border-radius: 0.5rem; border-bottom: 0.1875rem solid transparent; }
 .enlace:hover { background: rgba(255, 255, 255, 0.12); }
 .enlace.activo { border-bottom-color: var(--ambar); }
 .usuario-sesion { font-weight: 600; }
@@ -35,7 +35,7 @@ a { color: var(--azul); font-weight: 600; }
 .btn-menu { display: none; font: inherit; font-weight: 700; background: transparent; color: #fff; border: 0.125rem solid #fff; border-radius: var(--radio); padding: 0.4rem 0.9rem; cursor: pointer; }
 
 /* Estructura */
-.contenedor { flex: 1; width: 100%; max-width: 75rem; margin: 0 auto; padding: 2rem 5%; }
+.contenedor { flex: 1; width: 100%; max-width: 75rem; margin: 0 auto; padding: 2rem clamp(1rem, 5%, 4rem); }
 .contenedor:focus { outline: none; }
 .pie { background: var(--azul-oscuro); color: #fff; text-align: center; padding: 1rem 5%; border-top: 0.125rem solid var(--ambar); }
 .pie p { margin: 0; }
@@ -94,6 +94,8 @@ input:hover, select:hover, textarea:hover { border-color: var(--azul); }
 .indicador.pendiente { border-top-color: var(--ambar); }
 .indicador.en-curso { border-top-color: var(--azul); }
 .indicador.completado { border-top-color: var(--ok); }
+.indicador.monto .indicador-valor { font-size: clamp(1.2rem, 2.2vw, 1.6rem); white-space: normal; overflow-wrap: anywhere; }
+@media (min-width: 900px) { .indicadores { grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 1.7fr); } }
 .indicador-titulo { margin: 0; font-weight: 600; color: var(--gris); }
 .indicador-valor { margin: 0.1rem 0; font-size: 1.6rem; font-weight: 800; color: var(--azul-oscuro); line-height: 1.2; white-space: nowrap; }
 .ver-todos { text-align: right; }

@@ -53,6 +53,7 @@ export default function Tablero() {
             <Indicador titulo="Completados" valor={resumen.porEstado.Completado} clase="completado" />
             <Indicador
               titulo="Presupuesto total"
+              clase="monto"
               valor={formatoMXN(resumen.presupuestoTotal)}
               detalle={dolares ? `≈ ${formatoOtraMoneda(resumen.presupuestoTotal * dolares.tasas.USD, 'USD')}` : undefined}
             />
